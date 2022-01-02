@@ -1,3 +1,0 @@
-import React, { Fragment } from 'react';
-
-export const Text = () => <Fragment>Welcome</Fragment>;
