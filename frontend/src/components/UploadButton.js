@@ -17,7 +17,8 @@ const UploadButton = (props) => {
 
   return (
     <div className="col-md-6">
-      <label htmlFor="image-file" className="form-label">{props.labelText} &ensp;</label>
+      <label htmlFor="image-file" className="form-label">{props.labelText}</label>
+      <br/> 
       <input
         id="image-file"
         ref={hiddenFileInput}

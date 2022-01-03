@@ -13,6 +13,7 @@ import {
 import { motion } from 'framer-motion/dist/framer-motion';
 import { withAuth0 } from '@auth0/auth0-react';
 import ScrollDownGIF from '../assets/ScrollDown.gif';
+import axios from 'axios';
 
 const example = {
   a: 1,
@@ -24,6 +25,8 @@ const example = {
   }
 }
 
+const API_ENDPOINT = "http://192.168.1.2:5000/api/submit"
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -34,13 +37,15 @@ class Dashboard extends Component {
       outputs: null
     };
 
+    this.source = axios.CancelToken.source();
+
     this.setFile.bind(this);
     this.handleSubmit.bind(this);
   }
 
   setFile = (file, fileName) => {
     this.setState({[fileName]: file});
-  };
+  }
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -51,9 +56,30 @@ class Dashboard extends Component {
     }
     else {
       e.target.form.classList.add('was-validated');
-
+      const formData = new FormData();
+      formData.append("img_file", this.state.imageFile);
+      formData.append("annot_file", this.state.annotFile);
+      axios({
+        method: "post",
+        url: API_ENDPOINT,
+        data: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      }).then(res => {
+        this.setState({
+          outputs: {
+            json: JSON.parse(res.data.output_json),
+            image: res.data.output_img
+          }
+        })
+      }).catch(e => console.log(e.message))
     }
-  };
+  }
+
+  componentWillUnmount() {
+    if (this.source) {
+      this.source.cancel("Landing Component got unmounted");
+    }
+  }
 
   render() {
     const { user } = this.props.auth0;
@@ -145,14 +171,24 @@ class Dashboard extends Component {
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 2 }}
           >
-            <Container className="text-center justify-content-center align-items-center col-md-6  mt-sm-5">
-              <h1>Output JSON</h1>
-            </Container>
-            <Code code={JSON.stringify(example, null, 2)} />
-            <Container className="text-center justify-content-center align-items-center col-md-6  mt-sm-5">
-              <h1>Output Image</h1>
-              <img src={this.state.outputs.image} alt="output image" />
-            </Container>
+            {
+              this.state.outputs.json ?
+                <>
+                <Container className="text-center justify-content-center align-items-center col-md-6 mt-sm-5">
+                  <h1>Output JSON</h1>
+                </Container>
+                <Code code={JSON.stringify(this.state.outputs.json, null, 2)} /> 
+                </> : null
+            }
+            {
+              this.state.outputs.image ?
+                <Container className="text-center justify-content-center align-items-center mt-sm-5 pb-5">
+                  <h1>Output Image</h1>
+                  <div className="image-output">
+                    <img src={`data:image/png;base64,${this.state.outputs.image}`} alt="output image" />
+                  </div>
+                </Container> : null
+            }
           </motion.div> : null
         }
       </>
