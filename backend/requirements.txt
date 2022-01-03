@@ -1,0 +1,12 @@
+"paddleocr>=2.0.1"
+paddlepaddle
+wordsegment
+transformers
+pandas
+json
+numpy
+pillow
+tensorflow
+keras
+tqdm
+textblob
