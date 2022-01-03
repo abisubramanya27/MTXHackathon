@@ -25,7 +25,7 @@ const example = {
   }
 }
 
-const API_ENDPOINT = "http://192.168.1.2:5000/api/submit"
+const API_ENDPOINT = "http://api/api/submit"
 
 class Dashboard extends Component {
   constructor(props) {
