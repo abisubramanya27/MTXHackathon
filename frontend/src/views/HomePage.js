@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import LoginButton from '../components/LoginButton.js';
 import SignupButton from '../components/SignupButton.js';
 import '../styles/HomePage.css';
@@ -13,12 +13,12 @@ class HomePage extends Component {
   render() {
     return (
       <div id="classichomepage">
-        <motion.div className="header" 
+        <motion.div
             initial={{ y: -250, opacity: 0 }}
             animate={{ y: -2, opacity: 1 }}
             transition={{ delay: 0.7, duration: 2 }}
         >
-          <Navbar id="homenavbar" scrolling dark expand="md" variant="dark" fixed="top">
+          <Navbar id="homenavbar" expand="md" variant="dark" fixed="top">
             <Container>
               <Navbar.Brand href="#">MTX</Navbar.Brand>
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -35,15 +35,15 @@ class HomePage extends Component {
             </Container>
           </Navbar>
         </motion.div>
-        <motion.div className="body" 
+        <motion.div
             initial={{ y: 400, opacity: 0 }}
             animate={{ y: 100, opacity: 1 }}
             transition={{ delay: 0.8, duration: 2, type: "spring", stiffness: 100 }}
         >
           <div className="row">
-            <Container className="text-white text-center justify-content-center align-items-center white-text mb-5 col-md-6 mt-xl-5">
+            <Container className="text-white text-center justify-content-center align-items-center mb-5 col-md-6 mt-sm-5">
               <h1 className="h1-responsive font-weight-bold">
-                Welcome!
+                Welcome to the App!
               </h1>
               <hr className="hr-light" />
               <h6 className="mb-4 lead" style={{ lineHeight: 1.7 }}>

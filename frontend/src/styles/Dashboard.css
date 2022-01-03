@@ -1,0 +1,34 @@
+#classicmainpage {
+    background: linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.7),
+      rgba(72, 15, 144, 0.4) 100%
+    ), url("http://mdbootstrap.com/img/Photos/Others/images/91.webp");;
+    background-repeat: repeat-y;
+    background-size: cover;
+    background-position: center center;
+    height: 100vh;
+}
+
+.codeDiv {
+  position: relative
+}
+
+.copyButton {
+  position: absolute;
+  right: 25px;
+  top: 40px;
+  font-size: 18px;
+  transition: color 0.5s;
+}
+
+.copyButton:hover {
+  color: #5c8afe
+}
+
+.syntax-highlighter {
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+  max-height: 512px;
+}
+  
