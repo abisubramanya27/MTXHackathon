@@ -1,6 +1,8 @@
 from paddleocr import PaddleOCR
 from textblob import TextBlob
 from wordsegment import load, segment
+import numpy as np
+
 load()
 
 
@@ -37,10 +39,10 @@ def process_ocr_text(text):
 
 
 
-def get_ocr_data(train_image_path):
-
+def get_ocr_data(image):
+  img_arr = np.asarray(image.convert('RGB'))[:,:,::-1]
   ocr = PaddleOCR(use_angle_cls=True,lang ='en',show_log=False)
-  result = ocr.ocr(train_image_path,cls=True)
+  result = ocr.ocr(img_arr,cls=True)
   tot_json = {}
   tot_json['form'] = []
   count = 0

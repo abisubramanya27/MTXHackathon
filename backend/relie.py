@@ -14,7 +14,7 @@ DROPOUT_ATTN = 0.1   #@param {type:"number"}
 DROPOUT_DENSE = 0.5  #@param {type:"number"}
 N_NEIGHBOURS = 5     #@param {type:"integer"}
 BATCH_SIZE = 64      #@param {type:"integer"}
-DEVICE = 'cpu'
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MODEL_NAME = "bert-base-cased"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
@@ -52,16 +52,13 @@ def build_dataset(text,box,link,list_of_boxes,neighbour_list,X):
 
 def build_model(model_path):
 	model = ScoreModel(tokenizer.vocab_size, TMP_EMB_DIM, HIDDEN_DIM, MAX_LENGTH, NHEADS, N_NEIGHBOURS, DROPOUT_DENSE, DROPOUT_ATTN)
-	DEVICE = "cpu"
 	model.to(DEVICE)
 	state_dict = torch.load(model_path, map_location="cpu")
-	load_result = model.load_state_dict(state_dict, strict=False)
-	print(load_result)
+	model.load_state_dict(state_dict, strict=False)
 	return model
 
-def prepare_scoring_dataset(image_path,anno,X,Q,N_NEIGHBOURS=5):
+def prepare_scoring_dataset(img,anno,X,Q,N_NEIGHBOURS=5):
   prepare_X(X)
-  img = Image.open(image_path)
   width = img.width
   height = img.height
   list_of_boxes = anno['form']
@@ -95,40 +92,36 @@ def prepare_scoring_dataset(image_path,anno,X,Q,N_NEIGHBOURS=5):
 
 
 
-def relie(img_path,anno,model_path):
+def relie(img,anno,model_path):
 	#model path is path to pytorch_model.bin
 	model = build_model(model_path)
 	X = {}
 	Q = []
-	prepare_scoring_dataset(img_path,anno,X,Q)
+	prepare_scoring_dataset(img,anno,X,Q)
 	keys = X.keys()
 	key = [k for k in keys]
 	count = 64
 	all_preds = []
 	for i in tqdm(range(0,len(Q),count)):
 	  pred = model.forward(torch.tensor(X[key[0]][i:i+count]).to(DEVICE)
-	                                      ,torch.tensor(X[key[1]][i:i+count],dtype=torch.float32).to(DEVICE)
-	                                      ,torch.tensor(X[key[2]][i:i+count]).to(DEVICE)
-	                                      ,torch.tensor(X[key[3]][i:i+count],dtype=torch.float32).to(DEVICE)
-	                                      ,torch.tensor(X[key[4]][i:i+count]).to(DEVICE)
-	                                      ,torch.tensor(X[key[5]][i:i+count],dtype=torch.float32).to(DEVICE)
-	                                      )
-	  all_preds += pred.tolist()
+                        ,torch.tensor(X[key[1]][i:i+count],dtype=torch.float32).to(DEVICE)
+                        ,torch.tensor(X[key[2]][i:i+count]).to(DEVICE)
+                        ,torch.tensor(X[key[3]][i:i+count],dtype=torch.float32).to(DEVICE)
+                        ,torch.tensor(X[key[4]][i:i+count]).to(DEVICE)
+                        ,torch.tensor(X[key[5]][i:i+count],dtype=torch.float32).to(DEVICE)
+                        )
+    all_preds += pred.tolist()
 
-	all_preds = [j[0] for j in all_preds]
-	all_preds = np.array(all_preds)
-	preds = np.rint(all_preds+0.02)
-	for (qid,ansid),score in zip(Q,preds):
-	  if score==1:
-	    link_list = anno['form'][qid].get('linking',[])
-	    link_list.append([qid,ansid])
-	    anno['form'][qid]['linking'] = link_list
-	    link_list = anno['form'][ansid].get('linking',[])
-	    link_list.append([qid,ansid])
-	    anno['form'][ansid]['linking'] = link_list
+  all_preds = [j[0] for j in all_preds]
+  all_preds = np.array(all_preds)
+  preds = np.rint(all_preds+0.02)
+  for (qid,ansid),score in zip(Q,preds):
+    if score==1:
+      link_list = anno['form'][qid].get('linking',[])
+      link_list.append([qid,ansid])
+      anno['form'][qid]['linking'] = link_list
+      link_list = anno['form'][ansid].get('linking',[])
+      link_list.append([qid,ansid])
+      anno['form'][ansid]['linking'] = link_list
 
-	return anno
-
-
-
-
+  return anno
