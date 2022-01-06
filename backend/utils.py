@@ -8,7 +8,14 @@ def get_links(l,id):
 
   return links
 
+def get_bound_box(boxes):
+  # print(boxes)
+  a = min([box[0] for box in boxes])
+  b = min([box[1] for box in boxes])
+  c = max([box[2] for box in boxes])
+  d = max([box[3] for box in boxes])
 
+  return [[a,b],[c,b],[c,d],[a,d]]
 
 #relative position of neighbour
 def get_rel_pos(box1,box2):
@@ -71,13 +78,4 @@ def prepare_X(X):
   X['neighbour_text'] = []
   X['neighbour_pos'] = []
 
-def get_links(l,id):
-  links = []
-  for i in l:
-    if i[0]==id:
-      links.append(i[1])
-    else :
-      links.append(i[0])
-
-  return links
 

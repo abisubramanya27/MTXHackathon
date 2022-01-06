@@ -1,18 +1,4 @@
-from utils import *
-
 from paddleocr import PaddleOCR
-import pandas as pd
-import os
-import json
-import numpy as np
-import random
-from PIL import Image
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers
-from keras.models import Sequential
-from keras.layers import Dense
-from tqdm import tqdm
 from textblob import TextBlob
 from wordsegment import load, segment
 load()
@@ -40,9 +26,7 @@ def process_ocr_text(text):
     ss = segment(word)
     text += word[:len(ss[0])]
     word = word[len(ss[0]):]
-    ccc = 0
     for indd in range(1,len(ss)):
-      ccc = 1
       text += ' '
       text += word[:len(ss[indd])]
       word = word[len(ss[indd]):]
@@ -56,9 +40,6 @@ def process_ocr_text(text):
 def get_ocr_data(train_image_path):
 
   ocr = PaddleOCR(use_angle_cls=True,lang ='en',show_log=False)
-
-  f = train_image_path
-  filename = f[0:len(f)-4]
   result = ocr.ocr(train_image_path,cls=True)
   tot_json = {}
   tot_json['form'] = []

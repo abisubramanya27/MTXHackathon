@@ -1,4 +1,10 @@
-from model import *
+from model import ScoreModel
+from transformers import AutoTokenizer
+import numpy as np
+from utils import get_rel_pos,find_neighbour,prepare_X
+import torch
+from PIL import Image
+from tqdm import tqdm
 
 MAX_LENGTH = 64      #@param {type:"integer"}
 HIDDEN_DIM = 768     #@param {type:"integer"}
@@ -8,7 +14,7 @@ DROPOUT_ATTN = 0.1   #@param {type:"number"}
 DROPOUT_DENSE = 0.5  #@param {type:"number"}
 N_NEIGHBOURS = 5     #@param {type:"integer"}
 BATCH_SIZE = 64      #@param {type:"integer"}
-
+DEVICE = 'cpu'
 MODEL_NAME = "bert-base-cased"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
@@ -77,7 +83,6 @@ def prepare_scoring_dataset(image_path,anno,X,Q,N_NEIGHBOURS=5):
     neighbours = sorted(temp_neighb_list,key=lambda x:(float(1)/x[1],x[2]))[:N_NEIGHBOURS]
     neighbours = [a for (a,b,c) in neighbours]
     neighbour_list.append(neighbours)
-  total_boxes = len(list_of_boxes)
   
   list_of_non_qns = [ind for ind, box in enumerate(list_of_boxes) if box['label'] != 'question']
 
@@ -90,7 +95,7 @@ def prepare_scoring_dataset(image_path,anno,X,Q,N_NEIGHBOURS=5):
 
 
 
-def relie(image_path,anno,model_path):
+def relie(img_path,anno,model_path):
 	#model path is path to pytorch_model.bin
 	model = build_model(model_path)
 	X = {}

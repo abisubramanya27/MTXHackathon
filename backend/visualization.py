@@ -1,4 +1,4 @@
-from utils import *
+from utils import get_bound_box,get_links
 
 import cv2
 from PIL import Image
@@ -26,12 +26,6 @@ def draw_ocr_own(image,
         image = cv2.polylines(np.array(image), [box], True,color , thick)
     return image
 
-def get_bound_box(boxes):
-  # print(boxes)
-  a = min([box[0] for box in boxes])
-  b = min([box[1] for box in boxes])
-  c = max([box[2] for box in boxes])
-  d = max([box[3] for box in boxes])
 
 def ocr_linking_visualization(img_path,anno,font_path):
   image = Image.open(img_path).convert('RGB')
@@ -65,6 +59,6 @@ def ocr_linking_visualization(img_path,anno,font_path):
     small_boxes.append(temp_box)
 
   image = draw_ocr_own(image, small_boxes ,font_path,(0,0,0),thick=1)
-  image = Image.fromarray(image)
+  
   
   return image

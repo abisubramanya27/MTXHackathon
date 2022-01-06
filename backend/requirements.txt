@@ -15,3 +15,11 @@ six==1.16.0
 typing_extensions==4.0.1
 Werkzeug==2.0.2
 zipp==3.7.0
+paddleocr>=2.0.1
+paddlepaddle
+wordsegment
+transformers
+torch
+tqdm
+textblob
+opencv-python
