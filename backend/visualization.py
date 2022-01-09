@@ -37,7 +37,6 @@ def ocr_linking_visualization(image,anno):
         boxes.append([[a,b],[c,b],[c,d],[a,d]])
 
     image = draw_ocr_own(image, boxes, color)
-    print(type(image))
     image = Image.fromarray(image)
 
 
