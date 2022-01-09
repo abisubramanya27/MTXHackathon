@@ -3,6 +3,7 @@ Code for the Application submitted to MTX Hack Olympics 2.0, 2022.
 
 ## Requirements
 The server code was built using flask framework in Python-3.7 and the client code was developed in React-17.0.2
+
 But the end-to-end application is Dockerized, hence there is absolutely no need to worry about different versions of the languages and packages.
 **NOTE:** The Dockerization is developed and tested on CPU only. We didn't have sufficient time and resource to test and modify the Dockerfile for backend on GPUs
 
