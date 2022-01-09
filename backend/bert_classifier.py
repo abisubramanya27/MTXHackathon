@@ -1,7 +1,7 @@
 import torch
 from transformers import BertForSequenceClassification, BertTokenizer
-from transformers import TextClassificationPipeline
 import pickle
+from torch.utils.data import DataLoader
 
 class FUNDSDataset_Inference(torch.utils.data.Dataset):
     def __init__(self, encodings):
@@ -10,6 +10,9 @@ class FUNDSDataset_Inference(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
         return item
+    
+    def __len__(self):
+        return len(self.encodings['input_ids'])
 
 
 class Dataset_Inference():
@@ -31,20 +34,20 @@ class Dataset_Inference():
 
 def inference_model(annotation_inp_file, bert_model_path, knn_model_path):
   tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-  model = BertForSequenceClassification.from_pretrained(bert_model_path,local_files_only=True)
+  model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=4)
+  state_dict = torch.load(bert_model_path, map_location="cpu")
+  model.load_state_dict(state_dict, strict=False)
   data=Dataset_Inference(annotation_inp_file)
   text = data.prep()
-  pipe = TextClassificationPipeline(model=model, tokenizer=tokenizer, return_all_scores=True)
-  X=[]
-  for txt in text:
-    res = pipe(txt)
-    x1=res[0][0]['score']
-    x2=res[0][1]['score']
-    x3=res[0][2]['score']
-    x4=res[0][3]['score']
-    X.append(list([x1,x2,x3,x4]))
+  encodings = tokenizer(text, truncation=True, padding=True)
+  inference_dataloader = DataLoader(FUNDSDataset_Inference(encodings), batch_size=37, drop_last=False)
+  X = torch.tensor([])
+  for inputs in inference_dataloader:
+    X = torch.cat((X, model(**inputs).logits))
+
+  print(X.size())
   knn_model = pickle.load(open(knn_model_path, 'rb'))
-  result = knn_model.predict(X) 
+  result = knn_model.predict(X.tolist())
   return result
 
 

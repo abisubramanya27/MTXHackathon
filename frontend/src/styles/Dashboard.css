@@ -38,5 +38,14 @@
   max-height: 512px;
 }
 
+.color-show-div {
+  display: inline-block;
+} 
 
-  
+.color-show-div .color-box {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  background-color: #ccc;
+  margin: 5px 5px 1px 20px;
+}

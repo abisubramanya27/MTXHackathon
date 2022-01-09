@@ -3,7 +3,6 @@ from transformers import AutoTokenizer
 import numpy as np
 from utils import get_rel_pos,find_neighbour,prepare_X
 import torch
-from PIL import Image
 from tqdm import tqdm
 
 MAX_LENGTH = 64      #@param {type:"integer"}
@@ -81,29 +80,31 @@ def prepare_scoring_dataset(img,anno,X,Q,N_NEIGHBOURS=5):
     neighbours = [a for (a,b,c) in neighbours]
     neighbour_list.append(neighbours)
   
-  list_of_non_qns = [ind for ind, box in enumerate(list_of_boxes) if box['label'] != 'question']
+  list_of_non_qns = [ind for ind, box in enumerate(list_of_boxes) if box['label'] == 'answer']
 
   for box in list_of_boxes:
-    if box['label'] == 'question' :
+    if box['label'] == 'question':
       text = box['text']
       for link in list_of_non_qns:
         build_dataset(text,box,link,list_of_boxes,neighbour_list,X)
         Q.append([box['id'],link])
+  
+  return neighbour_list
 
 
 
 def relie(img,anno,model_path):
-	#model path is path to pytorch_model.bin
-	model = build_model(model_path)
-	X = {}
-	Q = []
-	prepare_scoring_dataset(img,anno,X,Q)
-	keys = X.keys()
-	key = [k for k in keys]
-	count = 64
-	all_preds = []
-	for i in tqdm(range(0,len(Q),count)):
-	  pred = model.forward(torch.tensor(X[key[0]][i:i+count]).to(DEVICE)
+  #model path is path to pytorch_model.bin
+  model = build_model(model_path)
+  X = {}
+  Q = []
+  neighbour_list = prepare_scoring_dataset(img,anno,X,Q)
+  keys = X.keys()
+  key = [k for k in keys]
+  count = 64
+  all_preds = []
+  for i in tqdm(range(0,len(Q),count)):
+    pred = model.forward(torch.tensor(X[key[0]][i:i+count]).to(DEVICE)
                         ,torch.tensor(X[key[1]][i:i+count],dtype=torch.float32).to(DEVICE)
                         ,torch.tensor(X[key[2]][i:i+count]).to(DEVICE)
                         ,torch.tensor(X[key[3]][i:i+count],dtype=torch.float32).to(DEVICE)
@@ -114,14 +115,37 @@ def relie(img,anno,model_path):
 
   all_preds = [j[0] for j in all_preds]
   all_preds = np.array(all_preds)
-  preds = np.rint(all_preds+0.02)
-  for (qid,ansid),score in zip(Q,preds):
-    if score==1:
-      link_list = anno['form'][qid].get('linking',[])
-      link_list.append([qid,ansid])
-      anno['form'][qid]['linking'] = link_list
-      link_list = anno['form'][ansid].get('linking',[])
-      link_list.append([qid,ansid])
-      anno['form'][ansid]['linking'] = link_list
+  linked_ans = {}
+  for (qid,ansid),score in zip(Q,all_preds):
+    upd_score = score * 0.99 ** (np.abs(get_rel_pos(anno['form'][qid], anno['form'][ansid]))[0] / 10)
+                  # if ansid not in neighbour_list[qid] else score
+                  
+    if qid not in linked_ans:
+      linked_ans[qid] = [(ansid, upd_score)]
+    else:
+      linked_ans[qid].append((ansid, upd_score))
+      
+    if (ansid in neighbour_list[qid] and upd_score > 0.5) or \
+        (ansid not in neighbour_list[qid] and upd_score > 0.7):
+      if 'linking' not in anno['form'][qid]:
+        anno['form'][qid]['linking'] = [[qid,ansid]]
+      else:
+        anno['form'][qid]['linking'].append([qid,ansid])
+      if 'linking' not in anno['form'][ansid]:
+        anno['form'][ansid]['linking'] = [[qid,ansid]]
+      else:
+        anno['form'][ansid]['linking'].append([qid,ansid])
 
+  for qid, answers in linked_ans.items():
+    if len(anno['form'][qid].get('linking', [])) == 0:
+      answers.sort(reverse=True, key=lambda x: x[1])
+      if 'linking' not in anno['form'][qid]:
+        anno['form'][qid]['linking'] = [[qid,answers[0][0]]]
+      else:
+        anno['form'][qid]['linking'].append([qid,answers[0][0]])
+      if 'linking' not in anno['form'][answers[0][0]]:
+        anno['form'][answers[0][0]]['linking'] = [[qid,answers[0][0]]]
+      else:
+        anno['form'][answers[0][0]]['linking'].append([qid,answers[0][0]])
+      
   return anno

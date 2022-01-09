@@ -2,9 +2,12 @@ import React, {useState} from 'react';
 import '../styles/Dashboard.css';
 import { Container } from 'react-bootstrap';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { paraisoDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import paraisoDark from 'react-syntax-highlighter/dist/cjs/styles/hljs/paraiso-dark';
+import javascript from 'react-syntax-highlighter/dist/cjs/languages/hljs/json';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FaRegClipboard, FaRegCopy } from 'react-icons/fa';
+
+SyntaxHighlighter.registerLanguage('javascript', javascript);
 
 export default function Code(props) {
     const [isCopied, setIsCopied] = useState(false);

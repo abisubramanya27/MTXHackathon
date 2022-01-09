@@ -48,7 +48,7 @@ class HomePage extends Component {
               <hr className="hr-light" />
               <h6 className="mb-4 lead" style={{ lineHeight: 1.7 }}>
                 This website is created for the MTX HackOlympics 2.0 in Shaastra 2022. <br />
-                We worked on the problem statement of <i><strong>Key-Value Pair Detection in Documents</strong></i>. 
+                We worked on the problem statement: <i><strong>Key-Value Pair Detection in Documents</strong></i>. 
                 You can login to use the application using your Gmail ID or can sign up if you wish to create a new account on the website.
               </h6>
             </Container>

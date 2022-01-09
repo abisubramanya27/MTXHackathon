@@ -15,17 +15,7 @@ import { withAuth0 } from '@auth0/auth0-react';
 import ScrollDownGIF from '../assets/ScrollDown.gif';
 import axios from 'axios';
 
-const example = {
-  a: 1,
-  b: 2,
-  c: [1, 2],
-  d: {
-    foo: 4,
-    bar: 5
-  }
-}
-
-const API_ENDPOINT = "http://api/api/submit"
+const API_SUBMIT_ENDPOINT = '/api/submit'
 
 class Dashboard extends Component {
   constructor(props) {
@@ -61,7 +51,7 @@ class Dashboard extends Component {
       formData.append("annot_file", this.state.annotFile);
       axios({
         method: "post",
-        url: API_ENDPOINT,
+        url: API_SUBMIT_ENDPOINT,
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
       }).then(res => {
@@ -112,15 +102,34 @@ class Dashboard extends Component {
             transition={{ delay: 0.8, duration: 2, type: "spring", stiffness: 100 }}
         >
           <div className="row">
-            <Container className="text-white text-center justify-content-center align-items-center col-md-6  mt-sm-5">
+            <Container className="text-white text-center justify-content-center align-items-center col-md-10  mt-sm-5">
               <h1 className="h1-responsive font-weight-bold">
                 Hi, {user.name}!
               </h1>
               <hr className="hr-light" />
               <h6 className="mb-4 lead" style={{ lineHeight: 1.7 }}>
                 You can upload the image for the task. 
-                We will recognize the text, identify the key value pairs and output them as in JSON format.
+                We will recognize the text, identify the key value pairs and output them in JSON format. <br />
+                We also display the image with colored bounding boxes identifying the class of that text. <br />
+                <div className='color-show-div'>
+                  <div className='color-box' style={{backgroundColor: "#ff0000"}}></div>
+                  <span>question</span>
+                </div>
+                <div className='color-show-div'>
+                  <div className='color-box' style={{backgroundColor: "#ffe600"}}></div>
+                  <span>answer</span>
+                </div>
+                <div className='color-show-div'>
+                  <div className='color-box' style={{backgroundColor: "#004cff"}}></div>
+                  <span>header</span>
+                </div>
+                <div className='color-show-div'>
+                  <div className='color-box' style={{backgroundColor: "#5eff00"}}></div>
+                  <span>other</span>
+                </div>
+                <br />
               </h6>
+              (<strong>NOTE:</strong> The Inference models running on the backend might take 1-2 mins if run without GPUs)
             </Container>
           </div>
         </motion.div>
@@ -159,7 +168,7 @@ class Dashboard extends Component {
               transition={{ delay: 1, duration: 1.5 }}
             >
               <Container className="text-center justify-content-center align-items-center">
-                <img src={ScrollDownGIF} alt="scroll down for output..." style={{width: "50%"}} />
+                <img src={ScrollDownGIF} alt="scroll down for output..." style={{width: "30%"}} />
               </Container>
             </motion.div> : null
         }
@@ -185,7 +194,7 @@ class Dashboard extends Component {
                 <Container className="text-center justify-content-center align-items-center mt-sm-5 pb-5">
                   <h1>Output Image</h1>
                   <div className="image-output">
-                    <img src={`data:image/png;base64,${this.state.outputs.image}`} alt="output image" />
+                    <img src={`data:image/png;base64,${this.state.outputs.image}`} alt="annotated output" />
                   </div>
                 </Container> : null
             }

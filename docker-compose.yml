@@ -9,5 +9,7 @@ services:
       context: .
       dockerfile: Dockerfile.client
     image: mtx-app-client
+    depends_on:
+      - api
     ports:
       - "3000:80"

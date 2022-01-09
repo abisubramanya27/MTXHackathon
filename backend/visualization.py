@@ -4,7 +4,7 @@ import cv2
 from PIL import Image
 import numpy as np
 
-def draw_ocr_own(image, boxes, color=(255, 0, 0),thick=2):
+def draw_ocr_own(image, boxes, color=(255, 0, 0), thick=2):
     """
     Visualize the results of OCR detection and recognition
     args:
@@ -18,12 +18,12 @@ def draw_ocr_own(image, boxes, color=(255, 0, 0),thick=2):
 
     box_num = len(boxes)
     for i in range(box_num):
-        box = np.reshape(np.array(boxes[i]), [-1, 1, 2]).astype(np.int64)
-        image = cv2.polylines(np.array(image), [box], True, color , thick)
-    return image
+        box = np.reshape(np.array(boxes[i]), [-1, 1, 2]).astype(np.int32)
+        image = cv2.polylines(np.array(image, dtype=np.uint8), [box], True, color , thick)
+    return np.array(image, dtype=np.uint8)
 
 
-def ocr_linking_visualization(image,anno,font_path):
+def ocr_linking_visualization(image,anno):
   image = image.convert('RGB')
   labels = ['question','answer','header','other']
   colors = [(255,0,0),(255,255,0),(0,0,255),(0,255,0)]
@@ -36,7 +36,8 @@ def ocr_linking_visualization(image,anno,font_path):
         a,b,c,d = box['box']
         boxes.append([[a,b],[c,b],[c,d],[a,d]])
 
-    image = draw_ocr_own(image, boxes,font_path,color)
+    image = draw_ocr_own(image, boxes, color)
+    print(type(image))
     image = Image.fromarray(image)
 
 
@@ -54,6 +55,6 @@ def ocr_linking_visualization(image,anno,font_path):
       temp_box = get_bound_box([anno['form'][j]['box'] for j in links ])
     small_boxes.append(temp_box)
 
-  image = draw_ocr_own(image, small_boxes ,font_path,(0,0,0),thick=1)
+  image = draw_ocr_own(image, small_boxes, (0,0,0), thick=1)
   
-  return image
+  return Image.fromarray(image)
