@@ -3,11 +3,7 @@ from relie import relie
 from visualization import ocr_linking_visualization
 from bert_classifier import get_predicted_labels
 from PIL import Image
-
-# import os
-# os.environ['BERT_MODEL_PATH'] = '/Users/abishek_programming/Desktop/MTXHackathon/bert_model.bin'
-# os.environ['KNN_MODEL_PATH'] = '/Users/abishek_programming/Desktop/MTXHackathon/knn_model'
-# os.environ['SCORING_MODEL_PATH'] = '/Users/abishek_programming/Desktop/MTXHackathon/model.bin'
+import os
 
 def main(img, optional_annot):
     ocr = optional_annot
@@ -28,6 +24,3 @@ def main(img, optional_annot):
     image = ocr_linking_visualization(img,updated_ocr)
     
     return image, updated_ocr
-
-# img = Image.open('/Users/abishek_programming/Desktop/MTXHackathon/backend/82092117.png')
-# print(main(img, None))

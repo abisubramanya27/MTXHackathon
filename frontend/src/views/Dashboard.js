@@ -129,7 +129,8 @@ class Dashboard extends Component {
                 </div>
                 <br />
               </h6>
-              (<strong>NOTE:</strong> The Inference models running on the backend might take 1-2 mins if run without GPUs)
+              (<strong>NOTE:</strong> The Inference models running on the backend might take 1-3 mins if run without GPUs)
+              (<strong>NOTE 2:</strong> The optional annotation file if submitted must be in the FUNSD dataset format)
             </Container>
           </div>
         </motion.div>

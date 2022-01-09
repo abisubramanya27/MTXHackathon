@@ -3,12 +3,28 @@ Code for the Application submitted to MTX Hack Olympics 2.0, 2022.
 
 ## Requirements
 The server code was built using flask framework in Python-3.7 and the client code was developed in React-17.0.2
-But the application is Dockerized, hence there is absolutely no need to worry about different versions of the languages and packages.
+But the end-to-end application is Dockerized, hence there is absolutely no need to worry about different versions of the languages and packages.
+**NOTE:** The Dockerization is developed and tested on CPU only. We didn't have sufficient time and resource to test and modify the Dockerfile for backend on GPUs
 
 ## Setup
 - Clone this repository
-- From the root directory of this repository, run:
-```bash
-docker-compose up [--detach]
-```
-( `--detach` if you want the container to run in the background without blocking the shell )
+- To build the API and client docker images, from the root directory of this repository, run:
+    ```bash
+    docker-compose build
+    ```
+- To run the application after building, again from the root directory of this repository, run:
+    ```bash
+    docker-compose up [--detach]
+    ```
+    ( `--detach` if you want the container to run in the background without blocking the shell )
+- To stop the application (in case `--detach` was used so it was not stopped using `Ctrl-C`), run:
+    ```bash
+    docker-compose down
+    ```
+
+## Facts to read before using the appplication
+- The API Docker image goes by the name `mtx-app-api` and is ~5.2 GB in size.
+- The client Docker image goes by the name `mtx-app-client` and is ~30 MB in size.
+- `docker-compose build` takes quite some time, but it is an one time action and doesn't need to be run during subsequent `docker-compose up` and `docker-compose down` cycles.
+- Since the Dockerized application is set to run on CPU, the backend takes considerable time (~ 1-3 mins depending on the hardware) to run compared to that on a GPU (~ 10-30 secs).
+- Remember to set the Memory to >= 6 GB or preferrably 8 GB (default 2 GB does not suffice) and CPUs to >= 2 in the Docker settings for the application to run without problems. The default Swap size of 1 GB works, but can be increased proportional to the Memory.

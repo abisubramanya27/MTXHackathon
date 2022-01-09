@@ -42,7 +42,7 @@ def submit():
             annot = json.loads(request.files['annot_file']) if 'annot_file' in request.files else None
             img, annot = main(img, annot)
             encoded_img = get_response_image(img)
-            output_json = annot.to_json()
+            output_json = json.dumps(annot)
             response =  { 'Status' : 'Success', 'output_json': output_json , 'output_img': encoded_img}
             return jsonify(response)
     except Exception as e:
