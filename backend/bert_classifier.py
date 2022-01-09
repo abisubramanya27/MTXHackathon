@@ -45,7 +45,6 @@ def inference_model(annotation_inp_file, bert_model_path, knn_model_path):
   for inputs in inference_dataloader:
     X = torch.cat((X, model(**inputs).logits))
 
-  print(X.size())
   knn_model = pickle.load(open(knn_model_path, 'rb'))
   result = knn_model.predict(X.tolist())
   return result
