@@ -13,13 +13,10 @@ def main(img, optional_annot):
     updated_ocr = get_predicted_labels(ocr, os.getenv('BERT_MODEL_PATH'), os.getenv('KNN_MODEL_PATH'))
     
     for box in updated_ocr['form']:
+        box['linking'] = []
         box['box'] = list(map(lambda x: x * 1000 / img.height, box['box']))
     
     updated_ocr = relie(img,updated_ocr, os.getenv('SCORING_MODEL_PATH'))
-
-    for box in updated_ocr['form']:
-        if 'linking' not in box:
-            box['linking'] = []
         
     image = ocr_linking_visualization(img,updated_ocr)
     

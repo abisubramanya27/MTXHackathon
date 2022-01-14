@@ -39,7 +39,7 @@ def submit():
         print(request.method, request.files)
         if request.method == 'POST':
             img = Image.open(request.files['img_file'].stream)
-            annot = json.loads(request.files['annot_file']) if 'annot_file' in request.files else None
+            annot = json.loads(request.files['annot_file'].read()) if 'annot_file' in request.files else None
             img, annot = main(img, annot)
             encoded_img = get_response_image(img)
             output_json = json.dumps(annot)
