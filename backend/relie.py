@@ -117,7 +117,7 @@ def relie(img,anno,model_path):
   all_preds = np.array(all_preds)
   linked_ans = {}
   for (qid,ansid),score in zip(Q,all_preds):
-    upd_score = score * 0.99 ** (np.abs(get_rel_pos(anno['form'][qid], anno['form'][ansid]))[0] / 10)
+    upd_score = score * 0.9 ** (np.abs(get_rel_pos(anno['form'][qid], anno['form'][ansid]))[1] / 10)
                   # if ansid not in neighbour_list[qid] else score
                   
     if qid not in linked_ans:
