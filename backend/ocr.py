@@ -25,8 +25,6 @@ def process_ocr_text(text):
     word = blob_text.correct()
     word = str(word)
     ss = segment(word)
-    if len(ss) <= 0:
-      return word
     text += word[:len(ss[0])]
     word = word[len(ss[0]):]
     for indd in range(1,len(ss)):
