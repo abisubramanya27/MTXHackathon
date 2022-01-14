@@ -44,7 +44,7 @@ def inference_model(annotation_inp_file, bert_model_path, knn_model_path):
   text = data.prep()
   encodings = tokenizer(text, truncation=True, padding=True)
   inference_dataloader = DataLoader(FUNDSDataset_Inference(encodings), batch_size=37, drop_last=False)
-  X = torch.tensor([])
+  X = torch.tensor([]).to(DEVICE)
   for inputs in inference_dataloader:
     X = torch.cat((X, model(**inputs).logits))
 
