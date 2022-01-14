@@ -17,9 +17,8 @@ def process_ocr_text(text):
   words = text.split(' ')
   text = ''
   for word in words:
-    if not all(c.isalpha() for c in word):
+    if not all(c.isalpha() for c in word) or word=='':
       text += word
-      text += ' '
       if word != words[-1]: text += ' '
       continue
     blob_text = TextBlob(word)
