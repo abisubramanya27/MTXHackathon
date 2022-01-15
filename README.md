@@ -41,6 +41,8 @@ pip install docker-compose
     docker-compose up [--detach]
     ```
     ( `--detach` if you want the container to run in the background without blocking the shell )
+    
+    Once this is run, you can access the frontend website at http://localhost:3000/
 - To stop the application (in case `--detach` was used so it was not stopped using `Ctrl-C`), run:
     ```bash
     docker-compose down
