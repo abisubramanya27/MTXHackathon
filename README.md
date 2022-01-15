@@ -7,6 +7,29 @@ The server code was built using flask framework in Python-3.7 and the client cod
 But the end-to-end application is Dockerized, hence there is absolutely no need to worry about different versions of the languages and packages.
 **NOTE:** The Dockerization is developed and tested on CPU only. We didn't have sufficient time and resource to test and modify the Dockerfile for backend on GPUs
 
+
+The docker-compose code was built and tested on docker-compose version 1.29.2 (latest). In case you have any other versions running and face problems when building, upgrading to version 1.29.2 might be necessary.
+
+First uninstall the earlier version of docker-compose.
+- If you installed via **apt-get**
+```bash
+sudo apt-get remove docker-compose
+```
+- If you installed via **curl**
+```bash
+sudo rm /usr/local/bin/docker-compose
+```
+- If you installed via **pip**
+```bash
+pip uninstall docker-compose
+```
+
+Then install the latest version using
+```bash
+pip install docker-compose
+```
+
+
 ## Setup
 - Clone this repository
 - To build the API and client docker images, from the root directory of this repository, run:
