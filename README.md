@@ -1,5 +1,8 @@
-# MTXHackathon
-Code for the Application submitted to MTX Hack Olympics 2.0, 2022.
+# MTX ML Hackathon
+Code for the Application submitted to MTX ML/AI Hack Olympics 2.0, 2022.
+
+# Our Work's Brief Description
+Built an ML pipeline - used _PaddleOCR_ and heuristics for text extraction, _BERT_ model for classification, and designed a **new neural~network architecture** based on _Google’s ReLie model_ for the query-answer linking task factoring textual context, achieving **85.3\%~accuracy**. Developed an end-to-end web application with _Python_ backend, _React+Nginx_ frontend and dockerized deployment.
 
 ## Requirements
 The server code was built using flask framework in Python-3.7 and the client code was developed in React-17.0.2
